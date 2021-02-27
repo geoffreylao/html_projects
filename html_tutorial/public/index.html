@@ -19,6 +19,32 @@
   <body>
     <h1>Hello, Slippi!</h1>
 
+    <!-- <form id='file-catcher'>
+      <input id='file-input' type='file' multiple/>
+      <button type='submit'>
+        Submit
+      </button>
+    </form> -->
+
+    <form method="POST" action="/upload-profile-pic" enctype="multipart/form-data">
+      <div>
+          <label>Select your profile picture:</label>
+          <input type="file" name="profile_pic" />
+      </div>
+      <div>
+          <input type="submit" name="btn_upload_profile_pic" value="Upload" />
+      </div>
+    </form>
+    
+    <form method="POST" action="/upload-multiple-images" enctype="multipart/form-data">
+        <div>
+            <label>Select multiple images:</label>
+            <input type="file" name="multiple_images" multiple />
+        </div>
+        <div>
+            <input type="submit" name="btn_upload_multiple_images" value="Upload" />
+        </div>
+    </form>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
