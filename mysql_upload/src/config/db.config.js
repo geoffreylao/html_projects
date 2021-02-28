@@ -1,0 +1,1 @@
+// exports configuring parameters for mysql connection and sequelize

@@ -1,0 +1,1 @@
+// uses configuration above to intialize sequelize
