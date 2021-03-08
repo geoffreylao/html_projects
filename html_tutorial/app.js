@@ -5,10 +5,19 @@ const path = require('path');
 
 const app = express();
 
+const { promises: fs } = require("fs")
+const fsExtra = require('fs-extra')
+
+var script = require('./script');
+
+const srcDir = './uploads';
+const destDir = './temp/';
+
 const port = process.env.PORT || 3000;
 
 app.use(express.static('./public'));
-app.use(express.static('./uploads'))
+app.use(express.static('./uploads'));
+app.use(express.static('./temp'));
 
 const storage = multer.diskStorage({
   destination: function(req, file, cb) {
@@ -53,22 +62,45 @@ app.post('/upload-profile-pic', (req, res) => {
 app.post('/upload-multiple-images', (req, res) => {
   // 10 is the limit I've defined for number of uploaded files at once
   // 'multiple_images' is the name of our file input field
-  let upload = multer({ storage: storage, fileFilter: helpers.imageFilter }).array('multiple_images', 10);
+  let upload = multer({ storage: storage, fileFilter: helpers.slippiFilter }).array('slippi_files', 10);
 
   upload(req, res, function(err) {
       if (req.fileValidationError) {
           return res.send(req.fileValidationError);
       }
 
-      let result = "You have uploaded these images: <hr />";
+      let result = "You have uploaded these slippi files: <hr />";
       const files = req.files;
       let index, len;
 
       // Loop through all the uploaded images and display them on frontend
       for (index = 0, len = files.length; index < len; ++index) {
-          result += `<img src="${files[index].filename}" width="300" style="margin-right: 20px;">`;
+          result += `<h1>${files[index].filename}</h1>`;
       }
-      result += '<hr/><a href="./">Upload more images</a>';
+      result += '<hr/><a href="./">Upload more slippi files</a>';
       res.send(result);
+      //To copy a folder or file  
+      copyDir(srcDir, destDir);
+      
   });
+
+
 });
+
+async function copyDir(src, dest) {
+  await fs.mkdir(dest, { recursive: true });
+  let entries = await fs.readdir(src, { withFileTypes: true });
+
+  for (let entry of entries) {
+      let srcPath = path.join(src, entry.name);
+      let destPath = path.join(dest, entry.name);
+
+      entry.isDirectory() ?
+          await copyDir(srcPath, destPath) :
+          await fs.copyFile(srcPath, destPath);
+  }
+
+  fsExtra.emptyDirSync(src);
+  script.parse_folder(dest);
+  fsExtra.emptyDirSync(dest);
+}
